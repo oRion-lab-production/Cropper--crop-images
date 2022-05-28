@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cropper</title>
+    
+    <link rel="stylesheet" href="./src/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./src/lib/croppie/croppie.css" />
+
+    <style>
+        body {
+            display: -ms-flexbox;
+            display: -webkit-box;
+            display: flex;
+            -ms-flex-align: center;
+            -ms-flex-pack: center;
+            -webkit-box-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            justify-content: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+            height: 100vh;
+        }
+        .CroppieCrop {
+            /*height: 350px;*/
+        }
+        .CroppieCrop .cr-slider-wrap {
+            width: 30%;
+            position: absolute;
+            bottom: 10px;
+            z-index: 5;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0;
+            right: 0;
+        }
+        .CroppieContent {
+            width: 100%;
+            display: flex;
+        }
+        @media screen and (min-width: 768px) {
+            .CroppieCrop {
+                width: 70%;
+                padding: 0 10px;
+            }
+            .CroppieCrop .cr-slider-wrap {
+                right: 30%;
+            }
+            .RealTimeCrop {
+                width: 30%;
+                padding: 0 10px;
+            }
+        }
+        @media screen and (max-width: 767px) {
+            .CroppieCrop {
+                width: 100%;
+            }
+            .RealTimeCrop {
+                display: none;
+            }
+        }
+        .Capture {
+            width: 100%;
+            height: 150px;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+        .navigator {
+            -webkit-box-sizing: content-box !important;
+            -moz-box-sizing: content-box !important;
+            box-sizing: content-box !important;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="container d-flex justify-content-center text-center" style="max-width: 330px; width: 100%;">
+        <div class="row">
+            <div class="card m-2" style="width: 300px;">
+                <img src="./assets/img/index.png" alt="Croped Display" id="HJ"/>
+                <div class="card-body">
+                    <h2 class="card-title">Cropper</h2>
+                    <p class="card-text">Do you ever wonder crop on the cloud, doesn't even need to save a temporary picture before crop?. Here is a crop on the spot using @croppie library.</p>
+                    <p><a href="https://foliotek.github.io/Croppie/">Croppie Docs</a></p>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" name="upload" id="upload" onchange="openCrop(this)" value="Upload" accept="image/*" class="custom-file-input" aria-describedby="myInput" />
+                                    <label class="custom-file-label" for="myInput">Choose file</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 pt-3">
+                            <button id="btn" class="btn btn-block btn-primary">Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./src/lib/jquery/jquery.min.js"></script>
+    <script src="./src/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./src/lib/croppie/croppie.min.js"></script>
+
+    <script>
+
+        var CroppieCrop;
+
+        document.querySelector('.custom-file-input').addEventListener('change',function(e){
+            var fileName = document.getElementById("upload").files[0].name;
+            var nextSibling = e.target.nextElementSibling
+            nextSibling.innerText = fileName
+        })
+
+        function CreateCropModal() {
+            var CropModal = document.createElement("div");
+            CropModal.className = "CropModal modal fade";
+            CropModal.id = "CropModal";
+            CropModal.setAttribute("role", "dialog");
+
+            var ModalDialog = document.createElement("div");
+            ModalDialog.className = "modal-dialog modal-lg";
+            CropModal.appendChild(ModalDialog);
+
+            var ModalContent = document.createElement("div");
+            ModalContent.className = "modal-content";
+            ModalDialog.appendChild(ModalContent);
+
+            var ModalHeader = document.createElement("div");
+            ModalHeader.className = "modal-header";
+            var h4 = document.createElement("h5");
+            h4.className = "modal-title";
+            h4.innerHTML = "Crop Image";
+            var DismissBtn = document.createElement("button");
+            DismissBtn.type = "button";
+            DismissBtn.className = "close";
+            DismissBtn.setAttribute("data-dismiss", "modal");
+            DismissBtn.setAttribute("aria-labels", "Close");
+            DismissBtn.innerHTML = "<span aria-hidden='true'>&times;</span>";
+            ModalHeader.appendChild(h4);
+            ModalHeader.appendChild(DismissBtn);
+            ModalContent.appendChild(ModalHeader);
+
+            var ModalBody = document.createElement("div");
+            ModalBody.className = "modal-body";
+            var Row = document.createElement("div");
+            Row.className = "row";
+            var CroppieContent = document.createElement("div");
+            CroppieContent.className = "CroppieContent";
+            var CroppieCrop = document.createElement("div");
+            CroppieCrop.className = "CroppieCrop";
+            CroppieCrop.id = "CroppieCrop";
+            var RealTimeCrop = document.createElement("div");
+            RealTimeCrop.className = "RealTimeCrop";
+            RealTimeCrop.id = "RealTimeCrop";
+            var Capture = document.createElement("div");
+            Capture.className = "Capture";
+            Capture.id = "Capture";
+            RealTimeCrop.appendChild(Capture);
+            CroppieContent.appendChild(CroppieCrop);
+            CroppieContent.appendChild(RealTimeCrop);
+            Row.appendChild(CroppieContent);
+            ModalBody.appendChild(Row);
+            ModalContent.appendChild(ModalBody);
+
+            var ModalFooter = document.createElement("div");
+            ModalFooter.className = "modal-footer";
+            var ResultBtn = document.createElement("button");
+            ResultBtn.type = "button";
+            ResultBtn.className = "btn btn-primary";
+            ResultBtn.id = "BtnCrop";
+            ResultBtn.innerHTML = "Crop";
+            ResultBtn.setAttribute("data-dismiss", "modal");
+            ResultBtn.setAttribute("onclick", "GetImgFunction()");
+            ModalFooter.appendChild(ResultBtn);
+            ModalContent.appendChild(ModalFooter);
+
+            document.body.appendChild(CropModal);
+        }
+
+        function openCrop(this_) {
+            var ValidImageTypes = ["image/gif", "image/jpeg", "image/png", "image/x-icon"];
+            if (ValidImageTypes.indexOf(this_.files[0]["type"]) <= 0) {
+                alert("Invalid images file.");
+            } else {
+                $(".CropModal").remove();
+                CreateCropModal();
+                $("#CropModal").modal({ backdrop: "static" });
+                $("#CropModal").on('shown.bs.modal', function () {
+                    $("#CroppieCrop").croppie("destroy");
+
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        CroppieCrop.croppie('bind', {
+                            url: e.target.result,
+                            point: [0, 0, 0, 0],
+                            zoom: 0,
+                            orientation: 0
+                        });
+                    }
+                    reader.readAsDataURL(this_.files[0]);
+
+                    CroppieCrop = $("#CroppieCrop").croppie({
+                        viewport: {
+                            width: 150,
+                            height: 150,
+                            type: 'square'
+                        },
+                        boundary: { width: "100%", height: 350 },
+                        enforceBoundary: true,
+                        showZoomer: true,
+                        enableOrientation: true,
+                        enableZoom: true,
+                        enableResize: true,
+                        mouseWheelZoom: true,
+                        enableExif: false,
+                        update: function(evt) {
+                            CroppieCrop.croppie('result', { type: 'blob', size: 'viewport', format: 'png', quality: 0, circle: false }).then(function(cropped) {
+                                $("#Capture").css("background-image", "url('" + URL.createObjectURL(cropped) + "')");
+                            });
+                        }
+                    });
+
+                    $(".CroppieCrop .cr-resizer").css({
+                        "max-width": document.getElementById("CroppieCrop").offsetWidth + "px",
+                        "max-height": document.getElementById("CroppieCrop").offsetHeight + "px"
+                    });
+                });
+            }
+        }
+
+        function GetImgFunction() {
+            if (confirm("Confirm Crop")) {
+                CroppieCrop.croppie('result', { type: 'blob', size: 'viewport', format: 'png', quality: 0, circle: false }).then(function (cropped) {
+                    $("#HJ").attr('src', URL.createObjectURL(cropped));
+                });
+            }
+        }
+
+        $("#BtnCrop").unbind().on('click', function() {
+            if (confirm("Confirm Crop")) {
+                CroppieCrop.croppie('result', { type: 'blob', size: 'viewport', format: 'png', quality: 0, circle: false }).then(function(cropped) {
+                    $("#HJ").attr('src', cropped);
+                });
+            }
+        });
+
+        $("#btn").click(function() {
+            $.ajax({
+                dataType: 'json',
+                type: 'POST',
+                url: '@(Url.Action("Account", "UploadImg"))',
+                data: { "base64Img": $("#HJ").attr('src').replace(/^data\:image\/\w+\;base64\,/, '') },
+                success: function (status) {
+                    //Success_data
+                },
+                error: function () {
+                    alert("Whoops something went wrong! No Post APIs active.");
+                }
+            });
+        });
+
+    </script>
+
+</body>
+</html>
