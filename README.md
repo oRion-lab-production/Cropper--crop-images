@@ -12,6 +12,7 @@ A cropper file which use base64 to do everything on the pages before post back t
 
 Please indicate the URL post if u want to done a AJAX re-post images after cropped.
 
+```
   $("#btn").click(function() {
       $.ajax({
           dataType: 'json',
@@ -26,5 +27,5 @@ Please indicate the URL post if u want to done a AJAX re-post images after cropp
           }
       });
   });
-  
+```
 
