@@ -10,6 +10,10 @@
 
     <style>
         body {
+            background-image: url(./assets/img/index.png);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             display: -ms-flexbox;
             display: -webkit-box;
             display: flex;
@@ -240,14 +244,16 @@
             if (confirm("Confirm Crop")) {
                 CroppieCrop.croppie('result', { type: 'blob', size: 'viewport', format: 'png', quality: 0, circle: false }).then(function (cropped) {
                     $("#HJ").attr('src', URL.createObjectURL(cropped));
+                    $("body").css('background-image', 'url("' + URL.createObjectURL(cropped) + '")');
                 });
             }
         }
 
-        $("#BtnCrop").unbind().on('click', function() {
+        $("#BtnCropBtnCrop").unbind().on('click', function() {
             if (confirm("Confirm Crop")) {
                 CroppieCrop.croppie('result', { type: 'blob', size: 'viewport', format: 'png', quality: 0, circle: false }).then(function(cropped) {
                     $("#HJ").attr('src', cropped);
+                    $("body").css('background-image', 'url("' + URL.createObjectURL(cropped) + '")');
                 });
             }
         });
